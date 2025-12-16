@@ -1,5 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { Box, Button, Typography, List, ListItem, ListItemText } from '@mui/material'
+import { joinSession } from '../lib/firebase'
+import { makeOffer } from '../lib/webrtc'
 
 function Send() {
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -12,6 +14,38 @@ function Send() {
   const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const selected = e.target.files ? Array.from(e.target.files) : []
     setFiles(selected)
+  }
+
+  const promptCodeAndSend = async () => {
+    if (files.length === 0) return
+    const input = window.prompt('Enter 6-digit code from receiver:', '') || ''
+    const code = input.trim()
+    if (!/^\d{6}$/.test(code)) {
+      alert('Please enter a valid 6-digit code')
+      return
+    }
+    const ok = await joinSession(code)
+    if (!ok) {
+      alert('Could not join session. Check the code and try again.')
+      return
+    }
+
+    const { dc } = await makeOffer(code)
+
+    // Send simple file header + chunked content
+    for (const file of files) {
+      const header = JSON.stringify({ __type: 'file-header', name: file.name, size: file.size, type: file.type })
+      dc.send(header)
+      const chunkSize = 64 * 1024 // 64KB
+      let offset = 0
+      while (offset < file.size) {
+        const slice = file.slice(offset, offset + chunkSize)
+        const buf = await slice.arrayBuffer()
+        dc.send(buf)
+        offset += chunkSize
+      }
+    }
+    alert('Files sent. You may close this page.')
   }
 
   return (
@@ -79,6 +113,9 @@ function Send() {
               </ListItem>
             ))}
           </List>
+          <Button onClick={promptCodeAndSend} sx={{ mt: 2, border: '2px solid #fff', color: '#fff' }}>
+            Send Files
+          </Button>
         </Box>
       )}
     </Box>
