@@ -1,6 +1,20 @@
 import React from 'react'
 import { Box, Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { createSession, joinSession } from './../lib/firebase'
+
+
+
+async function onReceivedCLicked() {
+  const code = await createSession()
+  console.log('Session code (share this with sender):', code)
+  
+}
+
+async function onSendClicked() {
+  
+  
+}
 
 function Home() {
   const navigate = useNavigate()
@@ -68,7 +82,7 @@ function Home() {
 
       <Button
         fullWidth
-        onClick={() => navigate('/receive')}
+        onClick={() => onReceivedCLicked()}
         aria-label="Receive"
         sx={{
           flex: 1,
