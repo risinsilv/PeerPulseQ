@@ -1,4 +1,4 @@
-import React from 'react'
+ 
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from '../Home/Home'
 import Send from '../Send/Send'

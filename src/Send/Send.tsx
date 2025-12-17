@@ -201,7 +201,7 @@ function Send() {
                   }}
                >
                   <input
-                    ref={(el) => (codeInputsRef.current[i] = el)}
+                    ref={(el) => { codeInputsRef.current[i] = el }}
                     value={(code[i] ?? '')}
                     onChange={(e) => handleDigitChange(i, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(i, e)}

@@ -1,4 +1,4 @@
-import React from 'react'
+ 
 import { Box } from '@mui/material'
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
   durationSec?: number
 }
 
-export default function RadarBackground({ color = '#2b6fff', rings = 6, durationSec = 6 }: Props) {
+export default function RadarBackground({ color = '#2b6fff', rings = 6, durationSec: _durationSec = 6 }: Props) {
   const circles = Array.from({ length: rings })
   return (
     <Box

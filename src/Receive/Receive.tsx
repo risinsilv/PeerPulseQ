@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Box, Button, Typography, Divider, List, ListItem, ListItemText, LinearProgress } from '@mui/material'
 import { createSession, deleteSession } from '../lib/firebase'
 import { answerOffer } from '../lib/webrtc'
