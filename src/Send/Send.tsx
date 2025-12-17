@@ -181,7 +181,7 @@ function Send() {
                     height: 56,
                     borderRadius: 2,
                     background: 'white',
-                    border: '2px solid #2b6fff',
+                    border: '1px solid rgba(43, 111, 255, 0.25)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
