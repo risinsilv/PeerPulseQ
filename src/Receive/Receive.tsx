@@ -4,6 +4,7 @@ import { createSession, deleteSession } from '../lib/firebase'
 import { answerOffer } from '../lib/webrtc'
 import RadarBackground from '../components/RadarBackground'
 import TopBar from '../components/TopBar'
+import * as QRCode from 'qrcode'
 import { useNavigate } from 'react-router-dom'
 
 interface ReceivedFile {
@@ -23,6 +24,7 @@ function Receive() {
   const pcRef = useRef<RTCPeerConnection | null>(null)
   const unsubRef = useRef<(() => void) | null>(null)
   const [stopped, setStopped] = useState(false)
+  const [qrUrl, setQrUrl] = useState<string>('')
 
   useEffect(() => {
     if (initRef.current) return
@@ -35,6 +37,10 @@ function Receive() {
       const sessionCode = existing || await createSession()
       if (!existing) sessionStorage.setItem('sessionCode', sessionCode)
       setCode(sessionCode)
+      try {
+        const url = await QRCode.toDataURL(sessionCode, { width: 256, margin: 1 })
+        setQrUrl(url)
+      } catch {}
 
       const { unsubscribe, pc: peer } = await answerOffer(sessionCode, {
         onMessage: (e) => {
@@ -125,6 +131,14 @@ function Receive() {
           Copy
         </Button>
       </Box>
+      {qrUrl && (
+        <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+          <img src={qrUrl} alt="Session QR Code" style={{ width: 200, height: 200 }} />
+          <Typography sx={{ fontSize: 12, color: '#0a2540', opacity: 0.7 }}>
+            Scan this QR to join
+          </Typography>
+        </Box>
+      )}
       <Divider sx={{ width: '60%', borderColor: '#444' }} />
       <Typography sx={{ fontSize: 'clamp(16px, 3vw, 24px)' }}>
         {stopped ? 'Stopped receiving.' : 'Waiting for sender to connect...'}
@@ -147,9 +161,30 @@ function Receive() {
       {receivedFiles.length > 0 && (
         <Box sx={{ width: '80vw', maxWidth: 700 }}>
           <Typography sx={{ mt: 2, mb: 1 }}>Received files:</Typography>
+          <Box sx={{ maxHeight: '40vh', overflowY: 'auto', pr: 1 }}>
           <List>
             {receivedFiles.map((f, i) => (
-              <ListItem key={i} secondaryAction={
+              <ListItem key={i}>
+                
+                <ListItemText
+                  primary={f.name}
+                  secondary={`${(f.received / 1024).toFixed(1)} KB / ${(f.size / 1024).toFixed(1)} KB`}
+                />
+                <Box sx={{ width: '40%', ml: 2 }}>
+                  <LinearProgress
+                    variant="determinate"
+                    value={Math.min(100, Math.round((f.received / Math.max(1, f.size)) * 100))}
+                    sx={{
+                      backgroundColor: '#e8f5e9',
+                      '& .MuiLinearProgress-bar': { backgroundColor: '#2ecc71' },
+                    }}
+                  />
+                  {f.received >= f.size && (
+                    <Typography sx={{ mt: 0.5, fontSize: 12, color: '#2e7d32' }}>
+                      Download completed
+                    </Typography>
+                  )}
+                </Box>
                 <Button onClick={() => {
                   const blob = new Blob(f.chunks, { type: f.type })
                   const url = URL.createObjectURL(blob)
@@ -159,6 +194,7 @@ function Receive() {
                   a.click()
                   URL.revokeObjectURL(url)
                 }} sx={{
+                  marginLeft: 2,
                   color: '#0a2540',
                   background: 'rgba(43, 111, 255, 0.08)',
                   border: '1px solid rgba(43, 111, 255, 0.25)',
@@ -166,17 +202,10 @@ function Receive() {
                 }}>
                   Save
                 </Button>
-              }>
-                <ListItemText
-                  primary={f.name}
-                  secondary={`${(f.received / 1024).toFixed(1)} KB / ${(f.size / 1024).toFixed(1)} KB`}
-                />
-                <Box sx={{ width: '30%', ml: 2 }}>
-                  <LinearProgress variant="determinate" value={Math.min(100, Math.round((f.received / Math.max(1, f.size)) * 100))} />
-                </Box>
               </ListItem>
             ))}
           </List>
+          </Box>
         </Box>
       )}
       </Box>

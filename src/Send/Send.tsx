@@ -1,9 +1,10 @@
 import React, { useRef, useState } from 'react'
-import { Box, Button, Typography, List, ListItem, ListItemText, LinearProgress } from '@mui/material'
+import { Box, Button, Typography, List, ListItem, ListItemText, LinearProgress, ToggleButtonGroup, ToggleButton } from '@mui/material'
 import RadarBackground from '../components/RadarBackground'
 import TopBar from '../components/TopBar'
 import { joinSession } from '../lib/firebase'
 import { makeOffer } from '../lib/webrtc'
+import QrScanner from '../components/QrScanner'
 
 function Send() {
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -12,6 +13,7 @@ function Send() {
   const [sending, setSending] = useState(false)
   const [progress, setProgress] = useState<number[]>([])
   const codeInputsRef = useRef<Array<HTMLInputElement | null>>([])
+  const [mode, setMode] = useState<'code' | 'scan'>('code')
 
   const openPicker = () => {
     inputRef.current?.click()
@@ -167,11 +169,21 @@ function Send() {
       </Button>
 
       {files.length > 0 && (
-        <Box sx={{ maxHeight: '30vh', overflowY: 'auto', width: '80vw', p: 2, background: 'white', backdropFilter: 'blur(6px)', border: '1px solid rgba(43, 111, 255, 0.25)', borderRadius: 2 }}>
+        <Box sx={{ width: '80vw', p: 2, background: 'white', backdropFilter: 'blur(6px)', border: '1px solid rgba(43, 111, 255, 0.25)', borderRadius: 2 }}>
           <Box sx={{ mb: 1.5 }}>
             <Typography sx={{ mb: 1, color: '#0a2540', opacity: 0.8, letterSpacing: '0.12em' }}>
               Enter 6-digit code
             </Typography>
+            <ToggleButtonGroup
+              exclusive
+              value={mode}
+              onChange={(_, val) => val && setMode(val)}
+              sx={{ mb: 1, display: 'flex', justifyContent: 'center' }}
+            >
+              <ToggleButton value="code" sx={{ textTransform: 'none' }}>Type Code</ToggleButton>
+              <ToggleButton value="scan" sx={{ textTransform: 'none' }}>Scan QR</ToggleButton>
+            </ToggleButtonGroup>
+            {mode === 'code' ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1.2 }}>
               {Array.from({ length: 6 }).map((_, i) => (
                 <Box
@@ -215,36 +227,52 @@ function Send() {
                 </Box>
               ))}
             </Box>
+            ) : (
+              <QrScanner
+                onResult={(text) => {
+                  const digits = (text || '').replace(/\D/g, '').slice(0, 6)
+                  if (digits.length === 6) {
+                    setCode(digits)
+                    setMode('code')
+                  }
+                }}
+                onClose={() => setMode('code')}
+              />
+            )}
             <Typography sx={{ mt: 0.75, fontSize: 12, color: '#0a2540', opacity: 0.6 }}>
               Enter the code shown on the receiver
             </Typography>
           </Box>
-          <List sx={{ color: 'black' }}>
-            {files.map((f, i) => (
-              <ListItem key={i} sx={{ py: 0.5 }}>
-                <ListItemText primary={f.name} secondary={`${(f.size / 1024).toFixed(1)} KB`} />
-                {sending && (
-                  <Box sx={{ width: '30%', ml: 2 }}>
-                    <LinearProgress variant="determinate" value={progress[i] || 0} />
-                  </Box>
-                )}
-              </ListItem>
-            ))}
-          </List>
-          <Button
-            onClick={sendFiles}
-            disabled={sending || !/^\d{6}$/.test(code)}
-            sx={{
-              mt: 2,
-              color: sending ? '#8aa0d6' : '#0a2540',
-              background: 'rgba(43, 111, 255, 0.08)',
-              border: '1px solid rgba(43, 111, 255, 0.25)',
-              backdropFilter: 'blur(8px)'
-            }}
-          >
-            {sending ? 'Sending…' : 'Send Files'}
-          </Button>
+          <Box sx={{ maxHeight: '30vh', overflowY: 'auto' }}>
+            <List sx={{ color: 'black' }}>
+              {files.map((f, i) => (
+                <ListItem key={i} sx={{ py: 0.5 }}>
+                  <ListItemText primary={f.name} secondary={`${(f.size / 1024).toFixed(1)} KB`} />
+                  {sending && (
+                    <Box sx={{ width: '30%', ml: 2 }}>
+                      <LinearProgress variant="determinate" value={progress[i] || 0} />
+                    </Box>
+                  )}
+                </ListItem>
+              ))}
+            </List>
+          </Box>
         </Box>
+      )}
+      {files.length > 0 && (
+        <Button
+          onClick={sendFiles}
+          disabled={sending || !/^\d{6}$/.test(code)}
+          sx={{
+            mt: 2,
+            color: sending ? '#8aa0d6' : '#0a2540',
+            background: 'rgba(43, 111, 255, 0.08)',
+            border: '1px solid rgba(43, 111, 255, 0.25)',
+            backdropFilter: 'blur(8px)'
+          }}
+        >
+          {sending ? 'Sending…' : 'Send Files'}
+        </Button>
       )}
     </Box>
   )
