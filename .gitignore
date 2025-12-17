@@ -1,5 +1,14 @@
-# Ignore local Firebase config/module
-src/lib/firebase.ts
+
+
+# Env files (keep example tracked)
+.env
+.env.local
+.env.*.local
+!.env.example
+src/.env
+src/.env.local
+src/.env.*.local
+!src/.env.example
 # Logs
 logs
 *.log
