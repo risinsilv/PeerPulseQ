@@ -115,9 +115,9 @@ function Receive() {
         Your Session Code
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        {/* <Typography sx={{ fontSize: 'clamp(32px, 8vw, 72px)', fontWeight: 700 }}>
+        <Typography sx={{ fontSize: 'clamp(32px, 8vw, 72px)', fontWeight: 700 }}>
           {code || '------'}
-        </Typography> */}
+        </Typography>
         <Button
           onClick={() => code && navigator.clipboard.writeText(code)}
           sx={{
