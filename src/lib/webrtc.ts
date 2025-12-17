@@ -1,4 +1,4 @@
-import { setOffer, setAnswer, addIceCandidate, onOffer, onCandidates } from './firebase'
+import { setOffer, setAnswer, addIceCandidate, onOffer, onCandidates, onAnswer } from './firebase'
 
 const defaultIceServers: RTCIceServer[] = [
   { urls: 'stun:stun.l.google.com:19302' },
@@ -15,6 +15,7 @@ export interface OfferHandle {
   dc: RTCDataChannel
   offer: RTCSessionDescriptionInit
   unsubscribe: () => void
+  opened: Promise<void>
 }
 
 // Minimal helper: create an SDP offer and publish it + ICE to RTDB
@@ -26,6 +27,19 @@ export async function makeOffer(sessionCode: string, opts: MakeOfferOptions = {}
   const dc = pc.createDataChannel(dataChannelLabel)
   dc.binaryType = 'arraybuffer'
   if (opts.onMessage) dc.onmessage = opts.onMessage
+
+  // Promise resolves when the data channel is open and ready to send
+  const opened = new Promise<void>((resolve) => {
+    if (dc.readyState === 'open') {
+      resolve()
+    } else {
+      const onOpen = () => {
+        try { dc.removeEventListener('open', onOpen) } catch {}
+        resolve()
+      }
+      dc.addEventListener('open', onOpen)
+    }
+  })
 
   // Publish ICE candidates via helper (stored under candidates/caller)
   pc.onicecandidate = (e) => {
@@ -46,11 +60,19 @@ export async function makeOffer(sessionCode: string, opts: MakeOfferOptions = {}
     }
   })
 
+  // Apply callee answer when available
+  const unsubAnswer = onAnswer(sessionCode, async (answer) => {
+    if (answer && !pc.currentRemoteDescription) {
+      try { await pc.setRemoteDescription(answer) } catch {}
+    }
+  })
+
   const unsubscribe = () => {
     try { unsubCalleeCands && unsubCalleeCands() } catch {}
+    try { unsubAnswer && unsubAnswer() } catch {}
   }
 
-  return { pc, dc, offer, unsubscribe }
+  return { pc, dc, offer, unsubscribe, opened }
 }
 
 export interface AnswerOptions {
