@@ -104,8 +104,9 @@ function Receive() {
   return (
     <Box sx={{
       position: 'fixed', inset: 0, bgcolor: '#fff', color: '#0a2540',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      gap: '2vh', p: '2vh', pt: '96px', fontFamily: 'monospace', textAlign: 'center'
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start',
+      gap: '2vh', p: '2vh', pt: '96px', fontFamily: 'monospace', textAlign: 'center',
+      overflowY: 'auto'
     }}>
       <TopBar />
       <RadarBackground color="#2b6fff" rings={8} durationSec={7} />
@@ -114,9 +115,9 @@ function Receive() {
         Your Session Code
       </Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Typography sx={{ fontSize: 'clamp(32px, 8vw, 72px)', fontWeight: 700 }}>
+        {/* <Typography sx={{ fontSize: 'clamp(32px, 8vw, 72px)', fontWeight: 700 }}>
           {code || '------'}
-        </Typography>
+        </Typography> */}
         <Button
           onClick={() => code && navigator.clipboard.writeText(code)}
           sx={{
@@ -133,7 +134,7 @@ function Receive() {
       </Box>
       {qrUrl && (
         <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-          <img src={qrUrl} alt="Session QR Code" style={{ width: 200, height: 200 }} />
+          <img src={qrUrl} alt="Session QR Code" style={{ width: 180, height: 180 }} />
           <Typography sx={{ fontSize: 12, color: '#0a2540', opacity: 0.7 }}>
             Scan this QR to join
           </Typography>
@@ -159,9 +160,9 @@ function Receive() {
       </Button>
 
       {receivedFiles.length > 0 && (
-        <Box sx={{ width: '80vw', maxWidth: 700 }}>
+        <Box sx={{ width: { xs: '92vw', sm: '84vw' }, maxWidth: 700 }}>
           <Typography sx={{ mt: 2, mb: 1 }}>Received files:</Typography>
-          <Box sx={{ maxHeight: '40vh', overflowY: 'auto', pr: 1 }}>
+          <Box sx={{ maxHeight: { xs: '45vh', sm: '40vh' }, overflowY: 'auto', pr: 1 }}>
           <List>
             {receivedFiles.map((f, i) => (
               <ListItem key={i}>

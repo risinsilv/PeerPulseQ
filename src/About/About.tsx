@@ -8,11 +8,12 @@ export default function About() {
     <Box sx={{
       position: 'fixed', inset: 0, bgcolor: '#fff', color: '#0a2540',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start',
-      p: '2vh', pt: '96px', fontFamily: 'monospace', textAlign: 'center'
+      p: '2vh', pt: { xs: '84px', sm: '96px' }, fontFamily: 'monospace', textAlign: 'center',
+      overflowY: 'auto'
     }}>
       <TopBar />
       <RadarBackground color="#2b6fff" rings={8} durationSec={7} />
-      <Box sx={{ position: 'relative', zIndex: 1, maxWidth: 900 }}>
+      <Box sx={{ position: 'relative', zIndex: 1, maxWidth: 900, px: { xs: 1, sm: 0 } }}>
         <Typography sx={{ fontSize: 'clamp(28px, 4vw, 40px)', fontWeight: 800, letterSpacing: '0.12em', mb: 2 }}>
           About PeerPulseQ
         </Typography>

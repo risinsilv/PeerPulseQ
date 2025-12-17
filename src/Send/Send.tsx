@@ -123,16 +123,16 @@ function Send() {
       sx={{
         position: 'fixed',
         inset: 0,
-        overflow: 'hidden',
+        overflowY: 'auto',
         bgcolor: '#fff',
         color: '#0a2540',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         gap: '3vh',
         p: '2vh',
-        pt: '96px',
+        pt: { xs: '84px', sm: '96px' },
         boxSizing: 'border-box',
         fontFamily: 'monospace',
         textAlign: 'center',
@@ -153,15 +153,15 @@ function Send() {
         onClick={openPicker}
         aria-label="Pick files"
         sx={{
-          minHeight: '20vh',
-          minWidth: '60vw',
+          minHeight: { xs: '16vh', sm: '20vh' },
+          minWidth: { xs: '80vw', sm: '60vw' },
           color: '#0a2540',
           background: 'rgba(43, 111, 255, 0.08)',
           borderRadius: 2,
           backdropFilter: 'blur(8px)',
           textTransform: 'uppercase',
           letterSpacing: '0.2em',
-          fontSize: 'clamp(18px, 3.5vw, 32px)',
+          fontSize: 'clamp(16px, 3.5vw, 32px)',
           fontWeight: 700,
         }}
       >
@@ -169,7 +169,7 @@ function Send() {
       </Button>
 
       {files.length > 0 && (
-        <Box sx={{ width: '80vw', p: 2, background: 'white', backdropFilter: 'blur(6px)', border: '1px solid rgba(43, 111, 255, 0.25)', borderRadius: 2 }}>
+        <Box sx={{ width: { xs: '92vw', sm: '80vw' }, p: 2, background: 'white', backdropFilter: 'blur(6px)', border: '1px solid rgba(43, 111, 255, 0.25)', borderRadius: 2 }}>
           <Box sx={{ mb: 1.5 }}>
             <Typography sx={{ mb: 1, color: '#0a2540', opacity: 0.8, letterSpacing: '0.12em' }}>
               Enter 6-digit code
@@ -189,8 +189,8 @@ function Send() {
                 <Box
                   key={i}
                   sx={{
-                    width: 48,
-                    height: 56,
+                    width: { xs: 40, sm: 48 },
+                    height: { xs: 48, sm: 56 },
                     borderRadius: 2,
                     background: 'white',
                     border: '1px solid rgba(43, 111, 255, 0.25)',
@@ -219,7 +219,7 @@ function Send() {
                       textAlign: 'center',
                       fontFamily: 'monospace',
                       fontWeight: 800,
-                      fontSize: 22,
+                      fontSize: 20,
                       color: '#0a2540',
                       caretColor: '#2b6fff',
                     }}
@@ -243,7 +243,7 @@ function Send() {
               Enter the code shown on the receiver
             </Typography>
           </Box>
-          <Box sx={{ maxHeight: '30vh', overflowY: 'auto' }}>
+          <Box sx={{ maxHeight: { xs: '40vh', sm: '30vh' }, overflowY: 'auto' }}>
             <List sx={{ color: 'black' }}>
               {files.map((f, i) => (
                 <ListItem key={i} sx={{ py: 0.5 }}>

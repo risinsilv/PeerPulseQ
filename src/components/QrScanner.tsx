@@ -48,7 +48,7 @@ export default function QrScanner({ onResult, onClose }: Props) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
       <Typography sx={{ mb: 1, letterSpacing: '0.12em' }}>Scan QR Code</Typography>
-      <Box id={containerId.current} sx={{ width: 280, height: 280, border: '1px solid rgba(43,111,255,0.25)', borderRadius: 2 }} />
+      <Box id={containerId.current} sx={{ width: { xs: 240, sm: 280 }, height: { xs: 240, sm: 280 }, border: '1px solid rgba(43,111,255,0.25)', borderRadius: 2 }} />
       <Button onClick={onClose} sx={{ mt: 1, color: '#0a2540', background: 'rgba(43, 111, 255, 0.08)', border: '1px solid rgba(43, 111, 255, 0.25)' }}>
         Close Scanner
       </Button>

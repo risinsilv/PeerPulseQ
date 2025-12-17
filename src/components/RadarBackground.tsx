@@ -26,7 +26,7 @@ export default function RadarBackground({ color = '#2b6fff', rings = 6, duration
           top: '50%',
           left: '50%',
           width: '200vmax',
-          height: '20vmax',
+          height: '200vmax',
           transform: 'translate(-50%, -50%)',
           borderRadius: '50%',
           filter: 'blur(0.4px)',

@@ -18,8 +18,8 @@ export default function TopBar() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: '64px',
-        px: 3,
+        height: { xs: 56, sm: 64 },
+        px: { xs: 2, sm: 3 },
         background: 'rgba(255,255,255,0.85)',
         backdropFilter: 'blur(8px)',
         // no bottom border per request
